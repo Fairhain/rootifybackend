@@ -1,16 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import joblib  # Assuming your model is saved using joblib or pickle
+import joblib 
 import numpy as np
 from equation_model import EquationModel
 
 
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from your React frontend
+CORS(app) 
 
 # Load the pre-trained model
-model = joblib.load("water_prediction_model.pkl")  # Update with your model file path
+model = joblib.load("water_prediction_model.pkl")  
 erosion_model = joblib.load("erosion_trend_model.pkl")
 yield_model = joblib.load("yield_trend_model.pkl")
 water_model = joblib.load("water_trend_model.pkl")
@@ -19,15 +19,12 @@ ph_model = joblib.load("ph_trend_model.pkl")
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    try:
-        # Get the weather data from the request
+    try:        
         data = request.json
-        features = np.array(data['features']).reshape(1, -1)  # Assuming a single row of input
+        features = np.array(data['features']).reshape(1, -1) 
 
-        # Make a prediction
         prediction = model.predict(features)
         
-        # Return the prediction
         return jsonify({"prediction": prediction.tolist()})
 
     except Exception as e:
@@ -37,13 +34,12 @@ def predict():
 def graph():
     try:
         data = request.json
-        print("Received data:", data)  # Log the received data
+        print("Received data:", data) 
         
         required_keys = ['erosion', 'crop', 'water', 'ph']
         if not all(key in data for key in required_keys):
             return jsonify({"error": "Missing required keys in input data"}), 400
 
-        # Proceed with your logic
         model = EquationModel(data['erosion'], data['crop'], data['water'], data['ph'])
         model.loop_models()
 
@@ -67,7 +63,7 @@ def graph():
         })
 
     except Exception as e:
-        print("Error:", e)  # Log any exceptions
+        print("Error:", e)  
         return jsonify({"error": str(e)}), 400
 
 
