@@ -1,4 +1,4 @@
-from model import WaterModel
+from water_model import WaterModel
 
 # Create an instance of the model
 model_instance = WaterModel("TARP.csv")
